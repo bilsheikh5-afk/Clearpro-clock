@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeSafe - Live Expert Trading Insights</title>
+    <style>
+        /* Your existing CSS styles remain the same */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #2d3748;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo h1 {
+            font-size: 24px;
+            color: #4fc3f7;
+            margin-left: 10px;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #37474f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #90a4ae;
+        }
+        
+        .dashboard {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .balance {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .balance-label {
+            font-size: 14px;
+            color: #bbdefb;
+        }
+        
+        .balance-amount {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .profit {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .profit-positive {
+            color: #4caf50;
+        }
+        
+        .profit-negative {
+            color: #f44336;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #bbdefb;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            margin: 20px 0 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .view-all {
+            font-size: 14px;
+            color: #4fc3f7;
+        }
+        
+        .opportunity-card {
+            background-color: #1e293b;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            border-left: 4px solid #4fc3f7;
+            transition: transform 0.2s;
+        }
+        
+        .opportunity-card.new {
+            animation: highlight 2s ease-in-out;
+        }
+        
+        @keyframes highlight {
+            0% { background-color: #2d3748; }
+            100% { background-color: #1e293b; }
+        }
+        
+        .opportunity-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .asset {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .trend {
+            font-size: 14px;
+            padding: 3px 8px;
+            border-radius: 5px;
+        }
+        
+        .trend-up {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+        }
+        
+        .trend-down {
+            background-color: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+        }
+        
+        .opportunity-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .expert {
+            color: #90a4ae;
+        }
+        
+        .risk-level {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        
+        .risk-low {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+        }
+        
+        .risk-medium {
+            background-color: rgba(255, 152, 0, 0.2);
+            color: #ff9800;
+        }
+        
+        .risk-high {
+            background-color: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+        }
+        
+        .opportunity-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .time-remaining {
+            font-size: 12px;
+            color: #90a4ae;
+        }
+        
+        .action-btn {
+            background-color: #4fc3f7;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .action-btn:hover {
+            background-color: #29b6f6;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #1a1a2e;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #2d3748;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #90a4ae;
+            font-size: 12px;
+        }
+        
+        .nav-item.active {
+            color: #4fc3f7;
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            margin: 15px 0;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        
+        .filter-tab {
+            padding: 8px 15px;
+            background-color: #1e293b;
+            border-radius: 20px;
+            margin-right: 10px;
+            white-space: nowrap;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .filter-tab.active {
+            background-color: #4fc3f7;
+            color: white;
+        }
+        
+        .expert-card {
+            background-color: #1e293b;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .expert-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #37474f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #90a4ae;
+            margin-right: 15px;
+            font-size: 20px;
+        }
+        
+        .expert-info {
+            flex: 1;
+        }
+        
+        .expert-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .expert-specialty {
+            font-size: 14px;
+            color: #90a4ae;
+            margin-bottom: 5px;
+        }
+        
+        .expert-rating {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        
+        .rating-stars {
+            color: #ffc107;
+            margin-right: 5px;
+        }
+        
+        .disclaimer {
+            background-color: rgba(244, 67, 54, 0.1);
+            border: 1px solid rgba(244, 67, 54, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        
+        .connection-status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+        
+        .connected {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+        }
+        
+        .disconnected {
+            background-color: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="connection-status disconnected" id="connectionStatus">
+        Connecting...
+    </div>
+    
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">TS</div>
+                <h1>TradeSafe Live</h1>
+            </div>
+            <div class="user-avatar">
+                <span>JD</span>
+            </div>
+        </header>
+        
+        <div class="dashboard" id="portfolioDashboard">
+            <div class="balance">
+                <div class="balance-label">Portfolio Value</div>
+                <div class="balance-amount">$12,458.75</div>
+            </div>
+            <div class="profit">
+                <div class="balance-label">Today's Profit/Loss</div>
+                <div class="profit-positive">+$245.60</div>
+            </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value">8</div>
+                    <div class="stat-label">Open Trades</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">73%</div>
+                    <div class="stat-label">Win Rate</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">1.4</div>
+                    <div class="stat-label">Risk Ratio</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section-title">
+            <h2>Live Trading Opportunities</h2>
+            <span class="view-all">View All</span>
+        </div>
+        
+        <div class="filter-tabs">
+            <div class="filter-tab active">All</div>
+            <div class="filter-tab">Stocks</div>
+            <div class="filter-tab">Forex</div>
+            <div class="filter-tab">Crypto</div>
+            <div class="filter-tab">Low Risk</div>
+        </div>
+        
+        <div id="opportunitiesContainer">
+            <!-- Opportunities will be loaded dynamically -->
+            <div class="loading">Loading trading signals...</div>
+        </div>
+        
+        <div class="section-title">
+            <h2>Top Experts</h2>
+            <span class="view-all">View All</span>
+        </div>
+        
+        <div id="expertsContainer">
+            <!-- Experts will be loaded dynamically -->
+        </div>
+        
+        <div class="disclaimer">
+            <strong>Disclaimer:</strong> Trading involves substantial risk of loss and is not suitable for every investor. The suggestions provided are for informational purposes only. You should not construe any such information as legal, tax, investment, financial, or other advice. Past performance is not indicative of future results.
+        </div>
+        
+        <div class="bottom-nav">
+            <div class="nav-item active">
+                <div class="nav-icon">📈</div>
+                <div>Opportunities</div>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">👥</div>
+                <div>Experts</div>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">💼</div>
+                <div>Portfolio</div>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">⚙️</div>
+                <div>Settings</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // Socket.io connection
+        const socket = io();
+        const connectionStatus = document.getElementById('connectionStatus');
+        
+        socket.on('connect', () => {
+            console.log('Connected to server');
+            connectionStatus.textContent = 'Live';
+            connectionStatus.className = 'connection-status connected';
+        });
+        
+        socket.on('disconnect', () => {
+            console.log('Disconnected from server');
+            connectionStatus.textContent = 'Offline';
+            connectionStatus.className = 'connection-status disconnected';
+        });
+        
+        // Load initial data
+        async function loadInitialData() {
+            try {
+                const [signalsResponse, expertsResponse, portfolioResponse] = await Promise.all([
+                    fetch('/api/signals'),
+                    fetch('/api/experts'),
+                    fetch('/api/portfolio')
+                ]);
+                
+                const signals = await signalsResponse.json();
+                const experts = await expertsResponse.json();
+                const portfolio = await portfolioResponse.json();
+                
+                displaySignals(signals);
+                displayExperts(experts);
+                updatePortfolio(portfolio);
+            } catch (error) {
+                console.error('Error loading initial data:', error);
+            }
+        }
+        
+        // Display signals
+        function displaySignals(signals) {
+            const container = document.getElementById('opportunitiesContainer');
+            
+            if (!signals || signals.length === 0) {
+                container.innerHTML = '<div class="loading">No trading signals available</div>';
+                return;
+            }
+            
+            container.innerHTML = signals.map(signal => `
+                <div class="opportunity-card" data-id="${signal.id}">
+                    <div class="opportunity-header">
+                        <div class="asset">${signal.asset}</div>
+                        <div class="trend trend-${signal.trend}">${signal.trend === 'up' ? 'Bullish' : 'Bearish'}</div>
+                    </div>
+                    <div class="opportunity-details">
+                        <div class="expert">${signal.expert}</div>
+                        <div class="risk-level risk-${signal.risk}">${signal.risk.charAt(0).toUpperCase() + signal.risk.slice(1)} Risk</div>
+                    </div>
+                    <div class="opportunity-details">
+                        <div>Entry: ${signal.entry}</div>
+                        <div>Target: ${signal.target}</div>
+                    </div>
+                    <div class="opportunity-details">
+                        <div>Stop Loss: ${signal.stopLoss}</div>
+                        <div>Expires: ${new Date(signal.expiry).toLocaleDateString()}</div>
+                    </div>
+                    <div class="opportunity-footer">
+                        <div class="time-remaining">Updated: ${new Date(signal.timestamp).toLocaleTimeString()}</div>
+                        <button class="action-btn" onclick="executeTrade('${signal.asset}')">Trade Now</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Display experts
+        function displayExperts(experts) {
+            const container = document.getElementById('expertsContainer');
+            
+            container.innerHTML = experts.map(expert => `
+                <div class="expert-card">
+                    <div class="expert-avatar">${expert.avatar}</div>
+                    <div class="expert-info">
+                        <div class="expert-name">${expert.name}</div>
+                        <div class="expert-specialty">${expert.specialty}</div>
+                        <div class="expert-rating">
+                            <span class="rating-stars">${'★'.repeat(Math.floor(expert.rating))}${expert.rating % 1 >= 0.5 ? '½' : ''}</span>
+                            <span>${expert.rating} (${expert.reviews} reviews) - ${expert.successRate}% Success</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Update portfolio
+        function updatePortfolio(portfolio) {
+            const dashboard = document.getElementById('portfolioDashboard');
+            const profitElement = dashboard.querySelector('.profit-positive, .profit-negative');
+            
+            dashboard.querySelector('.balance-amount').textContent = `$${portfolio.portfolioValue.toFixed(2)}`;
+            
+            const profitClass = portfolio.dailyProfit >= 0 ? 'profit-positive' : 'profit-negative';
+            const profitSign = portfolio.dailyProfit >= 0 ? '+' : '';
+            profitElement.className = profitClass;
+            profitElement.textContent = `${profitSign}$${portfolio.dailyProfit.toFixed(2)}`;
+            
+            dashboard.querySelectorAll('.stat-value')[0].textContent = portfolio.openTrades;
+            dashboard.querySelectorAll('.stat-value')[1].textContent = `${portfolio.winRate}%`;
+            dashboard.querySelectorAll('.stat-value')[2].textContent = portfolio.riskRatio.toFixed(1);
+        }
+        
+        // Trade execution
+        function executeTrade(asset) {
+            alert(`Opening trade for ${asset}. Please connect to your trading platform to execute this trade.`);
+        }
+        
+        // Real-time event listeners
+        socket.on('signals', (signals) => {
+            displaySignals(signals);
+        });
+        
+        socket.on('new-signals', (newSignals) => {
+            const container = document.getElementById('opportunitiesContainer');
+            newSignals.forEach(signal => {
+                const signalElement = document.createElement('div');
+                signalElement.className = 'opportunity-card new';
+                signalElement.innerHTML = `
+                    <div class="opportunity-header">
+                        <div class="asset">${signal.asset} 🔥 NEW</div>
+                        <div class="trend trend-${signal.trend}">${signal.trend === 'up' ? 'Bullish' : 'Bearish'}</div>
+                    </div>
+                    <div class="opportunity-details">
+                        <div class="expert">${signal.expert}</div>
+                        <div class="risk-level risk-${signal.risk}">${signal.risk.charAt(0).toUpperCase() + signal.risk.slice(1)} Risk</div>
+                    </div>
+                    <div class="opportunity-details">
+                        <div>Entry: ${signal.entry}</div>
+                        <div>Target: ${signal.target}</div>
+                    </div>
+                    <div class="opportunity-details">
+                        <div>Stop Loss: ${signal.stopLoss}</div>
+                        <div>Expires: ${new Date(signal.expiry).toLocaleDateString()}</div>
+                    </div>
+                    <div class="opportunity-footer">
+                        <div class="time-remaining">Updated: ${new Date(signal.timestamp).toLocaleTimeString()}</div>
+                        <button class="action-btn" onclick="executeTrade('${signal.asset}')">Trade Now</button>
+                    </div>
+                `;
+                container.insertBefore(signalElement, container.firstChild);
+            });
+        });
+        
+        socket.on('portfolio-update', (portfolio) => {
+            updatePortfolio(portfolio);
+        });
+        
+        // Filter tabs functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            filterTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    filterTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    // Implement filtering logic here
+                });
+            });
+            
+            // Bottom navigation functionality
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Load initial data
+            loadInitialData();
+        });
+    </script>
+</body>
+</html>
