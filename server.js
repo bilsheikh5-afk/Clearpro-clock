@@ -312,8 +312,8 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Serve static files from frontend directory
-app.use(express.static(path.join(__dirname, 'frontend')));
+// ✅ FIXED: Serve static files from root directory (where index.html is located)
+app.use(express.static(path.join(__dirname)));
 
 // API Routes
 app.get('/api/health', (req, res) => {
@@ -384,9 +384,9 @@ app.get('/api/generate-signals', async (req, res) => {
   }
 });
 
-// Serve frontend for all other routes (SPA support)
+// ✅ FIXED: Serve frontend for all other routes (SPA support)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // 404 handler for API routes
@@ -465,7 +465,7 @@ server.listen(PORT, () => {
    Generate Signals: http://localhost:${PORT}/api/generate-signals
    Quote: http://localhost:${PORT}/api/quote/AAPL
 
-📁 Static files served from: ${path.join(__dirname, 'frontend')}
+📁 Frontend served from: ${path.join(__dirname, 'index.html')}
 
 🔧 To get real data:
    1. Get free API key from https://finnhub.io
