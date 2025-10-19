@@ -1,170 +1,71 @@
-const fs = require('fs');
-const path = require('path');
+const finnhubService = require('./finnhubService');
 
 class SignalService {
   constructor() {
-    this.signals = this.loadInitialSignals();
+    this.signals = [];
     this.portfolio = this.loadPortfolioData();
     this.experts = this.loadExperts();
+    this.watchlist = ['AAPL', 'MSFT', 'GOOGL', 'TSLA', 'EUR/USD', 'BTC/USD'];
   }
 
-  loadInitialSignals() {
-    return [
-      {
-        id: 1,
-        asset: "AAPL - Apple Inc.",
-        trend: "up",
-        expert: "Mark Johnson",
-        risk: "low",
-        entry: "148.50 - 150.00",
-        target: "165.00",
-        stopLoss: "145.00",
-        timestamp: new Date().toISOString(),
-        expiry: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        id: 2,
-        asset: "EUR/USD",
-        trend: "down",
-        expert: "Sarah Chen",
-        risk: "medium",
-        entry: "1.0850 - 1.0870",
-        target: "1.0650",
-        stopLoss: "1.0950",
-        timestamp: new Date().toISOString(),
-        expiry: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString()
-      },
-      {
-        id: 3,
-        asset: "BTC/USD",
-        trend: "up",
-        expert: "Michael Torres",
-        risk: "high",
-        entry: "29800 - 30200",
-        target: "32500",
-        stopLoss: "28500",
-        timestamp: new Date().toISOString(),
-        expiry: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString()
-      }
-    ];
-  }
+  // ... (keep your existing methods)
 
-  loadPortfolioData() {
-    return {
-      portfolioValue: 12458.75,
-      dailyProfit: 245.60,
-      openTrades: 8,
-      winRate: 73,
-      riskRatio: 1.4,
-      lastUpdate: new Date().toISOString()
-    };
-  }
-
-  loadExperts() {
-    return [
-      {
-        id: 1,
-        name: "Mark Johnson",
-        specialty: "Stock Market Analyst",
-        rating: 4.9,
-        reviews: 128,
-        successRate: 78,
-        avatar: "MJ"
-      },
-      {
-        id: 2,
-        name: "Sarah Chen",
-        specialty: "Forex Specialist",
-        rating: 4.7,
-        reviews: 94,
-        successRate: 82,
-        avatar: "SC"
-      },
-      {
-        id: 3,
-        name: "Michael Torres",
-        specialty: "Cryptocurrency Expert",
-        rating: 4.5,
-        reviews: 156,
-        successRate: 71,
-        avatar: "MT"
-      }
-    ];
-  }
-
-  getSignals() {
-    return this.signals.filter(signal => 
-      new Date(signal.expiry) > new Date()
-    );
-  }
-
-  getExperts() {
-    return this.experts;
-  }
-
-  getPortfolioData() {
-    return this.portfolio;
-  }
-
-  generateNewSignals() {
-    const assets = [
-      { symbol: "MSFT - Microsoft", name: "Microsoft Corporation" },
-      { symbol: "GOOGL - Alphabet", name: "Alphabet Inc." },
-      { symbol: "TSLA - Tesla", name: "Tesla Inc." },
-      { symbol: "GBP/USD", name: "British Pound" },
-      { symbol: "ETH/USD", name: "Ethereum" }
-    ];
-
-    const trends = ["up", "down"];
-    const risks = ["low", "medium", "high"];
-    const experts = this.experts;
-
-    const newSignal = {
-      id: Date.now(),
-      asset: assets[Math.floor(Math.random() * assets.length)].symbol,
-      trend: trends[Math.floor(Math.random() * trends.length)],
-      expert: experts[Math.floor(Math.random() * experts.length)].name,
-      risk: risks[Math.floor(Math.random() * risks.length)],
-      entry: this.generatePriceRange(),
-      target: this.generateTargetPrice(),
-      stopLoss: this.generateStopLoss(),
-      timestamp: new Date().toISOString(),
-      expiry: new Date(Date.now() + Math.floor(Math.random() * 3 + 1) * 24 * 60 * 60 * 1000).toISOString()
-    };
-
-    this.signals.unshift(newSignal);
+  async generateRealSignals() {
+    const newSignals = [];
     
-    // Keep only latest 10 signals
-    if (this.signals.length > 10) {
-      this.signals = this.signals.slice(0, 10);
+    for (const symbol of this.watchlist) {
+      try {
+        const signal = await finnhubService.generateRealSignal(symbol);
+        if (signal) {
+          // Enhance with expert analysis and entry/target prices
+          const enhancedSignal = this.enhanceSignal(signal);
+          newSignals.push(enhancedSignal);
+        }
+      } catch (error) {
+        console.error(`Error generating signal for ${symbol}:`, error);
+      }
     }
 
-    return [newSignal];
+    // Add to existing signals
+    this.signals = [...newSignals, ...this.signals.slice(0, 5)];
+    return newSignals;
   }
 
-  generatePriceRange() {
-    const base = 100 + Math.random() * 200;
-    const range = 0.5 + Math.random() * 2;
-    return `${(base).toFixed(2)} - ${(base + range).toFixed(2)}`;
+  enhanceSignal(signal) {
+    const experts = this.experts;
+    const randomExpert = experts[Math.floor(Math.random() * experts.length)];
+    
+    // Calculate entry and target based on trend
+    const currentPrice = signal.currentPrice;
+    let entry, target;
+    
+    if (signal.trend === 'up') {
+      entry = (currentPrice * 0.99).toFixed(2);
+      target = (currentPrice * 1.05).toFixed(2);
+    } else {
+      entry = (currentPrice * 1.01).toFixed(2);
+      target = (currentPrice * 0.95).toFixed(2);
+    }
+
+    return {
+      id: Date.now(),
+      asset: signal.asset,
+      trend: signal.trend,
+      expert: randomExpert.name,
+      risk: signal.risk,
+      entry: entry,
+      target: target,
+      stopLoss: signal.trend === 'up' ? (currentPrice * 0.97).toFixed(2) : (currentPrice * 1.03).toFixed(2),
+      currentPrice: currentPrice,
+      priceChange: signal.priceChange,
+      timestamp: new Date().toISOString(),
+      expiry: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+    };
   }
 
-  generateTargetPrice() {
-    return (100 + Math.random() * 100).toFixed(2);
-  }
-
-  generateStopLoss() {
-    return (80 + Math.random() * 20).toFixed(2);
-  }
-
-  updatePortfolio() {
-    const change = (Math.random() - 0.5) * 200;
-    this.portfolio.portfolioValue += change;
-    this.portfolio.dailyProfit += change;
-    this.portfolio.openTrades = 7 + Math.floor(Math.random() * 4);
-    this.portfolio.winRate = 70 + Math.floor(Math.random() * 10);
-    this.portfolio.lastUpdate = new Date().toISOString();
-
-    return this.portfolio;
+  // Update your existing generateNewSignals to use real data
+  async generateNewSignals() {
+    return await this.generateRealSignals();
   }
 }
 
