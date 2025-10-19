@@ -1,7 +1,7 @@
 {
   "name": "tradesafe-app",
   "version": "1.0.0",
-  "description": "TradeSafe - Live Trading Signals",
+  "description": "TradeSafe - Live Trading Signals App",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -18,7 +18,17 @@
   "devDependencies": {
     "nodemon": "^3.0.1"
   },
-  "keywords": ["trading", "signals", "stocks", "finance"],
-  "author": "Your Name",
-  "license": "MIT"
+  "keywords": [
+    "trading",
+    "signals",
+    "stocks",
+    "real-time",
+    "finance",
+    "investment"
+  ],
+  "author": "TradeSafe Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }
