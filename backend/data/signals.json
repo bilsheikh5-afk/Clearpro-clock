@@ -1,0 +1,23 @@
+// signals.json
+{
+  "signals": [
+    {
+      "asset": "AAPL - Apple Inc.",
+      "trend": "up",
+      "expert": "Mark Johnson",
+      "risk": "low",
+      "entry": "148.50 - 150.00",
+      "target": "165.00",
+      "timestamp": "2025-10-20T14:30:00Z"
+    },
+    {
+      "asset": "EUR/USD",
+      "trend": "down",
+      "expert": "Sarah Chen",
+      "risk": "medium",
+      "entry": "1.0850 - 1.0870",
+      "target": "1.0650",
+      "timestamp": "2025-10-20T14:25:00Z"
+    }
+  ]
+}
