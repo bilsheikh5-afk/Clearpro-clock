@@ -12,7 +12,7 @@ const server = http.createServer(app);
 // Configuration from environment variables
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
-const CORS_ORIGIN = process.env.CORS_ORIGIN || '*';
+const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:3000';
 const FINNHUB_API_KEY = process.env.FINNHUB_API_KEY;
 
 const io = socketIo(server, {
@@ -37,7 +37,7 @@ class FinnhubService {
 
       const response = await axios.get(`${this.baseURL}/quote`, {
         params: {
-          symbol: symbol,
+          symbol: symbol.toUpperCase(),
           token: this.apiKey
         },
         timeout: 10000
@@ -62,7 +62,7 @@ class FinnhubService {
 
       const response = await axios.get(`${this.baseURL}/stock/profile2`, {
         params: {
-          symbol: symbol,
+          symbol: symbol.toUpperCase(),
           token: this.apiKey
         },
         timeout: 10000
@@ -77,14 +77,16 @@ class FinnhubService {
   generateMockQuote(symbol) {
     const basePrice = 100 + Math.random() * 200;
     const change = (Math.random() - 0.5) * 10;
+    const percentChange = (change / (basePrice - change)) * 100;
+    
     return {
-      c: basePrice, // current price
-      h: basePrice + Math.random() * 5, // high
-      l: basePrice - Math.random() * 5, // low
-      o: basePrice - change, // open
-      pc: basePrice - change, // previous close
-      d: change, // change
-      dp: (change / (basePrice - change)) * 100 // percent change
+      c: parseFloat(basePrice.toFixed(2)), // current price
+      h: parseFloat((basePrice + Math.random() * 5).toFixed(2)), // high
+      l: parseFloat((basePrice - Math.random() * 5).toFixed(2)), // low
+      o: parseFloat((basePrice - change).toFixed(2)), // open
+      pc: parseFloat((basePrice - change).toFixed(2)), // previous close
+      d: parseFloat(change.toFixed(2)), // change
+      dp: parseFloat(percentChange.toFixed(2)) // percent change
     };
   }
 
@@ -100,7 +102,10 @@ class FinnhubService {
       'NVDA': { name: 'NVIDIA Corporation', exchange: 'NASDAQ' }
     };
     
-    return companies[symbol] || { name: `${symbol} Company`, exchange: 'Unknown' };
+    return companies[symbol.toUpperCase()] || { 
+      name: `${symbol.toUpperCase()} Company`, 
+      exchange: 'Unknown Exchange' 
+    };
   }
 }
 
@@ -249,7 +254,8 @@ class SignalService {
 
     return {
       id: Date.now() + Math.random(),
-      asset: `${symbol} - ${profile.name}`,
+      symbol: symbol.toUpperCase(),
+      asset: `${symbol.toUpperCase()} - ${profile.name}`,
       trend: trend,
       expert: expert.name,
       risk: risk,
@@ -312,8 +318,11 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// ✅ FIXED: Serve static files from root directory (where index.html is located)
-app.use(express.static(path.join(__dirname)));
+// ✅ FIXED: Serve static files from 'public' directory or create one
+app.use(express.static(path.join(__dirname, 'public')));
+
+// If public directory doesn't exist, serve from root but be more specific
+app.use(express.static(__dirname));
 
 // API Routes
 app.get('/api/health', (req, res) => {
@@ -409,6 +418,7 @@ io.on('connection', (socket) => {
   // Send initial data
   socket.emit('signals', signalService.getSignals());
   socket.emit('portfolio', signalService.getPortfolioData());
+  socket.emit('experts', signalService.getExperts());
   
   socket.on('disconnect', () => {
     console.log('Client disconnected:', socket.id);
@@ -446,7 +456,7 @@ cron.schedule('*/5 * * * *', () => {
   console.log('Server health check - Running OK');
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`
 🚀 TradeSafe Server Started!
 📍 Port: ${PORT}
@@ -465,7 +475,7 @@ server.listen(PORT, () => {
    Generate Signals: http://localhost:${PORT}/api/generate-signals
    Quote: http://localhost:${PORT}/api/quote/AAPL
 
-📁 Frontend served from: ${path.join(__dirname, 'index.html')}
+📁 Frontend: http://localhost:${PORT}
 
 🔧 To get real data:
    1. Get free API key from https://finnhub.io
